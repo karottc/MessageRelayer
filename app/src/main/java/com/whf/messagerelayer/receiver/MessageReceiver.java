@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.whf.messagerelayer.confing.Constant;
 import com.whf.messagerelayer.service.SmsService;
@@ -43,6 +46,14 @@ public class MessageReceiver extends BroadcastReceiver {
             mobile = FormatMobile.formatMobile(mobile);
         }
         String content = sms.getMessageBody();//短信内容
+
+        Date date = new Date(sms.getTimestampMillis());// 得到发送短信的具体时间
+        // 2009-10-12 12:21:23
+        SimpleDateFormat format = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.US);// 为时间设置格式
+        String sendtime = format.format(date);
+
+        content += "[from: " + mobile + " ,at:" + sendtime + "]";
 
         Intent serviceIntent = new Intent(context, SmsService.class);
         serviceIntent.putExtra(Constant.EXTRA_MESSAGE_CONTENT,content);
